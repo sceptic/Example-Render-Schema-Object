@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FC } from 'react';
 import Button from '../Button';
+import { RenderComponentsSchema } from './RenderComponentsSchema';
 
 const Box = React.lazy(() => import('../Box'));
 const Input = React.lazy(() => import('../Input'));
 
-export const App: FC<{ name: string }> = ({ name }) => {
+
+export const App = () => {
+  return <Page />
+}
+
+export const Page =  () => {
   const [state, setState] = useState({
     name: 'Adrian',
     email: '',
     type: '',
     showRow: false,
+    loading: true,
   });
+
+  useEffect(() => {
+    setTimeout(() => setState({
+      ...state,
+      loading: false,
+    }), 1300);
+  }, []);
 
   const events = {
     name: {
@@ -36,12 +50,17 @@ export const App: FC<{ name: string }> = ({ name }) => {
           showRow: !state.showRow,
         }),
     },
+    modal: {
+
+    }
   };
 
-  return RenderComponentBuilder(ComponentSchema(state, events));
+  return <>
+    {RenderComponentsSchema(ComponentSchema(state, events, {}))}
+  </>;
 };
 
-const ComponentSchema = (state, events) => ({
+const ComponentSchema = (state, events, refs) => ({
   header: {
     component: () => <h1>Título Componente</h1>,
   },
@@ -51,7 +70,12 @@ const ComponentSchema = (state, events) => ({
       children: 'HOLA MUNDO',
     },
   },
+  loader: {
+    show: state.loading,
+    component: () => <h3>Cargando...</h3>,
+  },
   row1: {
+    show: !state.loading,
     component: Box,
     children: {
       name: {
@@ -73,7 +97,7 @@ const ComponentSchema = (state, events) => ({
     },
   },
   row2: {
-    display: state.showRow,
+    show: state.showRow,
     component: Box,
     children: {
       name2: {
@@ -101,19 +125,14 @@ const ComponentSchema = (state, events) => ({
       ...events.submit,
     },
   },
+  modals: {
+    component: ({children}) => <>{children}</>,
+    children: {
+      modal1: {
+        component: () => "Modal 1"
+      }
+    }
+  }
 });
 
-const RenderComponentBuilder = (ComponentSchema) =>
-  Object.keys(ComponentSchema).map((key) => {
-    const item = ComponentSchema[key];
-    if (item.display === false) return null;
-    const Component = item.component;
-    const { children, ...props } = item.props ?? {};
-    if (item.children)
-      return (
-        <Component {...props}>
-          {RenderComponentBuilder(item.children)}
-        </Component>
-      );
-    return <Component {...props}>{children}</Component>;
-  });
+
