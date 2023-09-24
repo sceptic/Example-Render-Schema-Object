@@ -1,11 +1,9 @@
-import React, { InputHTMLAttributes, useState } from 'react';
+import React, { useState } from 'react';
 import { FC } from 'react';
 import Button from '../Button';
 
 const Box = React.lazy(() => import('../Box'));
 const Input = React.lazy(() => import('../Input'));
-
-import './style.css';
 
 export const App: FC<{ name: string }> = ({ name }) => {
   const [state, setState] = useState({
@@ -45,7 +43,7 @@ export const App: FC<{ name: string }> = ({ name }) => {
 
 const ComponentSchema = (state, events) => ({
   header: {
-    component: () => <>TITULO CHULO</>,
+    component: () => <h1>Título Componente</h1>,
   },
   row0: {
     component: Box,
