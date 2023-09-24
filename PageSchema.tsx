@@ -20,20 +20,20 @@ export const PageSchema = (state, events, refs) => ({
     show: !state.loading,
     component: Box,
     children: {
-      name: {
-        component: Input,
-        props: {
-          id: '1',
-          value: state.name,
-          ...events.name,
-        },
-      },
       email: {
         component: Input,
         props: {
           id: '2',
           value: state.email,
           ...events.email,
+        },
+      },
+      name: {
+        component: Input,
+        props: {
+          id: '1',
+          value: state.name,
+          ...events.name,
         },
       },
     },
